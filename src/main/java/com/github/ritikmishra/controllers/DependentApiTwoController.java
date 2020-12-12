@@ -10,7 +10,8 @@ import io.micronaut.http.annotation.Produces;
 import io.micronaut.http.exceptions.HttpStatusException;
 import io.micronaut.security.oauth2.endpoint.token.response.TokenResponse;
 import io.reactivex.Single;
-import lombok.extern.slf4j.Slf4j;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.annotation.security.PermitAll;
 import java.util.Optional;
@@ -18,9 +19,8 @@ import java.util.concurrent.TimeUnit;
 
 @Controller("/dep2")
 @PermitAll
-@Slf4j
 public class DependentApiTwoController {
-
+    private static final Logger log = LoggerFactory.getLogger(DependentApiTwoController.class);
     private static final String onlyValidAccessToken = "orangegrape token";
 
     @Post("/auth")

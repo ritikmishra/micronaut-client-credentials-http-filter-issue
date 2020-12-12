@@ -7,16 +7,18 @@ import io.micronaut.http.annotation.Controller;
 import io.micronaut.http.annotation.Get;
 import io.micronaut.http.annotation.Produces;
 import io.reactivex.Single;
-import lombok.extern.slf4j.Slf4j;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.annotation.security.PermitAll;
 import javax.inject.Inject;
 import java.util.Map;
 
-@Slf4j
 @Controller("/api")
 @PermitAll
 public class PrimaryController {
+
+    private static final Logger log = LoggerFactory.getLogger(PrimaryController.class);
 
     @Inject
     DepApiOneClient depApiOneClient;
