@@ -9,7 +9,7 @@ To reproduce the error
 The issue is that at least one of the HTTP requests comes back with a 500 status code. This is related to the use of
 a `ClientCredentialsHttpClientFilter`. On the server, an exception is thrown by the filter.
 
-There are two possible exceptions that can be thrown by the filter
+There are at least two possible exceptions that might get thrown in relation to this issue
 
 
 ---
