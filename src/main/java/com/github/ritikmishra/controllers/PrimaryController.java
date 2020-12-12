@@ -20,7 +20,7 @@ public class PrimaryController {
     private static final Logger log = LoggerFactory.getLogger(PrimaryController.class);
 
     @Inject
-    DependentApiClient depApiOneClient;
+    DependentApiClient dependentApiClient;
 
     @Get
     @Produces(MediaType.TEXT_HTML)
@@ -45,10 +45,10 @@ public class PrimaryController {
     @Get("/api/produces_error")
     @Produces(MediaType.APPLICATION_JSON)
     public Single<Map<String, String>> returnCalculatedInformationBasedOffOfTwoResources() {
-        log.info("Get information hit, requesting data from deps 1 and 2");
+        log.info("Get request for information, requesting both resources from the api client");
         return Single.zip(
-                depApiOneClient.getResource(),
-                depApiOneClient.getOtherResource(),
+                dependentApiClient.getResource(),
+                dependentApiClient.getOtherResource(),
                 (res1, res2) -> Map.of("resource1", res1, "resource2", res2)
         );
     }
