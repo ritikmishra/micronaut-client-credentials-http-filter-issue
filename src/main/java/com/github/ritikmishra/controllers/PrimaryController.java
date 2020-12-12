@@ -1,7 +1,6 @@
 package com.github.ritikmishra.controllers;
 
-import com.github.ritikmishra.clients.DepApiOneClient;
-import com.github.ritikmishra.clients.DepApiTwoClient;
+import com.github.ritikmishra.clients.DependentApiClient;
 import io.micronaut.http.MediaType;
 import io.micronaut.http.annotation.Controller;
 import io.micronaut.http.annotation.Get;
@@ -14,46 +13,43 @@ import javax.annotation.security.PermitAll;
 import javax.inject.Inject;
 import java.util.Map;
 
-@Controller("/api")
+@Controller
 @PermitAll
 public class PrimaryController {
 
     private static final Logger log = LoggerFactory.getLogger(PrimaryController.class);
 
     @Inject
-    DepApiOneClient depApiOneClient;
+    DependentApiClient depApiOneClient;
 
-    @Inject
-    DepApiTwoClient depApiTwoClient;
-
-    @Get("/apple")
+    @Get
     @Produces(MediaType.TEXT_HTML)
-    public Single<String> getWebpage() {
-        return Single.just("<body>" +
-                "<p>hey there!</p> " +
-                "<script>for(let i = 0; i < 10; i++) {fetch('http://localhost:8080/api/main');" +
-                "fetch('http://localhost:8080/api/main2');}" +
+    public Single<String> getJavascriptThatCausesIssue() {
+        String retHtml = "<body>" +
+                "<p>hey there! open up the dev console in the browser to see the network requests failing</p> " +
+                "<p>normally at least 1 of the 10 requests made errors out, but if not, reload the page</p> " +
+                "<script>" +
+                "   for(let i = 0; i < 10; i++) {" +
+                "   fetch('http://localhost:8080/api/produces_error');" +
+                "   }" +
                 "</script>" +
-                "</body>");
+                "</body>";
+        return Single.just(retHtml);
     }
 
-    @Get("/main2")
+    /**
+     * This endpoint gives a 500 internal server error usually 1-3 times every 10 requests;
+     *
+     * @return Some dummy data for the sake of demonstrating the issue
+     */
+    @Get("/api/produces_error")
     @Produces(MediaType.APPLICATION_JSON)
-    public Single<Map<String, String>> getInformation2() {
+    public Single<Map<String, String>> returnCalculatedInformationBasedOffOfTwoResources() {
         log.info("Get information hit, requesting data from deps 1 and 2");
-        return Single.zip(depApiOneClient.getResource(), depApiOneClient.getOtherResource(), (res1, res2) -> {
-            return Map.of("dep1b", res1, "dep1a", res2);
-        });
-//        return depApiOneClient.getResource().map(v -> Map.of("papaya", v));
-    }
-
-    @Get("/main")
-    @Produces(MediaType.APPLICATION_JSON)
-    public Single<Map<String, String>> getInformation() {
-        log.info("Get information hit, requesting data from deps 1 and 2");
-        return Single.zip(depApiOneClient.getResource(), depApiTwoClient.getResource(), (res1, res2) -> {
-            return Map.of("dep1", res1, "dep2", res2);
-        });
-//        return depApiOneClient.getResource().map(v -> Map.of("papaya", v));
+        return Single.zip(
+                depApiOneClient.getResource(),
+                depApiOneClient.getOtherResource(),
+                (res1, res2) -> Map.of("resource1", res1, "resource2", res2)
+        );
     }
 }

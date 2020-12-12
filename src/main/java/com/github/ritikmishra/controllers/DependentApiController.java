@@ -19,37 +19,46 @@ import java.util.concurrent.TimeUnit;
 
 @Controller("/dep1")
 @PermitAll
-public class DependentApiOneController {
-    private static final Logger log = LoggerFactory.getLogger(DependentApiOneController.class);
+public class DependentApiController {
+    private static final Logger log = LoggerFactory.getLogger(DependentApiController.class);
     private static final String onlyValidAccessToken = "applebanana token";
 
+    /**
+     * Dummy api endpoint to authenticate with OAuth2 Client Credentials
+     * @param request http request with client id, secret encoded using Basic authentication in header
+     * @return the access token
+     */
     @Post("/auth")
     @Consumes({MediaType.APPLICATION_JSON, MediaType.APPLICATION_FORM_URLENCODED})
     public Single<TokenResponse> authenticateOauthToken(HttpRequest<?> request) {
-        log.info("Someone is trying to authenticate with dependent api 1");
+        log.info("Processing authentication request with dependent API");
         Optional<String> authHeader = request.getHeaders().getAuthorization();
         if (authHeader.isPresent()) {
             TokenResponse ret = new TokenResponse();
             ret.setAccessToken(onlyValidAccessToken);
             ret.setTokenType("bearer");
             ret.setExpiresIn(3600);
-            log.info("They succeeded in authing dep 1!");
+
+            log.info("dependent API successfully authenticated us");
             return Single.just(ret);
         }
-        log.info("They failed to auth dep1 :(");
-        return Single.error(new HttpStatusException(HttpStatus.UNAUTHORIZED, "auth missing or wrong 1a"));
+        log.info("Authentication with API failed");
+        return Single.error(new HttpStatusException(HttpStatus.UNAUTHORIZED, "auth missing or wrong (1a)"));
     }
 
+    /**
+     * A dummy resource that requires the access token to access
+     * @param request request with Bearer token
+     * @return the resource that needed authentication
+     */
     @Post("/resource1")
     @Produces(MediaType.TEXT_PLAIN)
     public Single<String> getResource(HttpRequest<?> request) {
         Optional<String> authHeader = request.getHeaders().getAuthorization();
         if (authHeader.isPresent() && authHeader.get().contains(onlyValidAccessToken)) {
-            log.info("Successfully gave away dep 1 res 1");
             return Single.just("tada! here is resource 1 tyvm");
         }
-        log.info("no auth header on dep 1 resource 1");
-        return Single.error(new HttpStatusException(HttpStatus.UNAUTHORIZED, "auth missing or wrong 1b"));
+        return Single.error(new HttpStatusException(HttpStatus.UNAUTHORIZED, "auth missing or wrong (1b)"));
     }
 
     @Post("/resource2")
@@ -57,10 +66,10 @@ public class DependentApiOneController {
     public Single<String> getOtherResource(HttpRequest<?> request) {
         Optional<String> authHeader = request.getHeaders().getAuthorization();
         if (authHeader.isPresent() && authHeader.get().contains(onlyValidAccessToken)) {
-            log.info("Successfully gave away dep 1 res 2");
-            return Single.timer(200, TimeUnit.MILLISECONDS).map((a) -> "choo choo! dep 1 resource 2 ready for you");
+            // The presence of a non-zero delay seems important. If its removed, the errors appear less frequently.
+            // Sadly, in my real application, the delay is a result of network latency/other unavoidable factors.
+            return Single.timer(200, TimeUnit.MILLISECONDS).map((a) -> "choo choo! resource 2 ready for you");
         }
-        log.info("no auth header on dep 1 resource 2");
-        return Single.error(new HttpStatusException(HttpStatus.UNAUTHORIZED, "auth missing or wrong 1c"));
+        return Single.error(new HttpStatusException(HttpStatus.UNAUTHORIZED, "auth missing or wrong (1c)"));
     }
 }

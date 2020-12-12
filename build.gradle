@@ -16,7 +16,7 @@ micronaut {
     runtime("netty")
     testRuntime("spock2")
     processing {
-        incremental(false)
+        incremental(true)
         annotations("com.github.ritikmishra.*")
     }
 }

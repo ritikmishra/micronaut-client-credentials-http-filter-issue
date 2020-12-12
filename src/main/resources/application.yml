@@ -9,20 +9,10 @@ micronaut:
           client-secret: "banana"
           grant-type: client_credentials
           token:
-            url: "http://localhost:8080/dep1/auth"
+            url: "http://localhost:8080/dep1/auth" # see DependentApiOneController
             auth-method: client_secret_basic
           client-credentials:
             enabled: true
             uri-regex: "http://localhost:8080/dep1/resource.?"
-        dependent-api-two:
-          client-id: "orange"
-          client-secret: "grape"
-          grant-type: client_credentials
-          token:
-            url: "http://localhost:8080/dep2/auth"
-            auth-method: client_secret_basic
-          client-credentials:
-            enabled: false
-            uri-regex: "http://localhost:8080/dep2/resource.?"
     reject-not-found: false
 

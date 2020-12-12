@@ -2,7 +2,7 @@
 
 To reproduce the error
 1. Run the micronaut application contained within the project
-2. Navigate to [http://localhost:8080/api/apple](http://localhost:8080/api/apple) in a webbrowser
+2. Navigate to [http://localhost:8080](http://localhost:8080) in a webbrowser
 3. Open the developer console and go to the "Network" tab to see requests
 
 
