@@ -5,6 +5,7 @@ To reproduce the error
 2. Navigate to [http://localhost:8080](http://localhost:8080) in a webbrowser
 3. Open the developer console and go to the "Network" tab to see requests
 
+The most relevant code snippet from this project towards the issue is the [controller method that makes two simultaneous calls to a dependent API that needs an OAuth token](https://github.com/ritikmishra/micronaut-client-credentials-http-filter-issue/blob/main/src/main/java/com/github/ritikmishra/controllers/PrimaryController.java#L45)
 
 The issue is that at least one of the HTTP requests comes back with a 500 status code. This is related to the use of
 a `ClientCredentialsHttpClientFilter`. On the server, an exception is thrown by the filter.
