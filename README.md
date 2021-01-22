@@ -1,4 +1,10 @@
-# demonstration of strange 500 issue
+# hey!
+
+the issue that this repository demonstrates has been fixed in `micronaut-security:2.2.2`. If you are experiencing the same problem, consider upgrading to a newer version of micronaut.
+
+---
+
+demonstration of strange 500 issue
 
 To reproduce the error
 1. Run the micronaut application contained within the project
